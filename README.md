@@ -1,1 +1,1 @@
-# BattleRoyale
+Battle Royale Configuration Manual:
