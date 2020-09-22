@@ -605,10 +605,12 @@ public final class BRMapsYamlManager {
 		int savedSpawns = 0;
 		if ( spawns.size ( ) > 0 ) {
 			int count = 0;
-			savedSpawns += section.isConfigurationSection("Spawns") ? 0 : YamlUtil.createNotExisting ( section , "Spawns" ) != null ? 1 : 0;
+//			savedSpawns += section.isConfigurationSection("Spawns") ? 0 : YamlUtil.createNotExisting ( section , "Spawns" ) != null ? 1 : 0;
+			
+			ConfigurationSection spawns_section = section.createSection ( "Spawns" );
 			for (ConfigurableLocation loc : spawns) {
 				if ( loc.isValid ( ) ) {
-					savedSpawns += loc.save ( section.getConfigurationSection ( "Spawns" ).createSection ( "spawn-" + count ) );
+					savedSpawns += loc.save ( spawns_section.createSection ( "spawn-" + count ) );
 					count ++;
 				}
 			}

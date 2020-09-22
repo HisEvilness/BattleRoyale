@@ -1,8 +1,12 @@
 package com.hotmail.AdrianSR.BattleRoyale.map.battlemap.minimap;
 
 import java.awt.Color;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -64,6 +68,9 @@ public class MiniMapRenderer extends MapRenderer {
 		}
 	}
 	
+	protected final Map < UUID , MiniMapZoom >  zoom_cache = new HashMap < > ( );
+	protected final Map < UUID , Vector >   location_cache = new HashMap < > ( );
+	
 	public MiniMapRenderer ( ) {
 		super ( true );
 	}
@@ -76,58 +83,67 @@ public class MiniMapRenderer extends MapRenderer {
 			return;
 		}
 		
-		boolean edit_mode = GameManager.isNotRunning ( );
-		MiniMapZoom  zoom = MiniMapZoomPreferences.getPreferences ( player ).getZoom ( );
-		Area display_area = map.getArea ( );
+		boolean      edit_mode = GameManager.isNotRunning ( );
+		MiniMapZoom       zoom = MiniMapZoomPreferences.getPreferences ( player ).getZoom ( );
+		MiniMapZoom  last_zoom = zoom_cache.get ( player.getUniqueId ( ) );
+		Vector   last_location = location_cache.get ( player.getUniqueId ( ) );
+		Area      display_area = map.getArea ( );
 		
 		// here we're drawing the map
 		if ( zoom == MiniMapZoom.NORMAL ) {
-			for ( int x = 0 ; x < 128 ; x ++ ) {
-				for ( int y = 0 ; y < 128 ; y ++ ) {
-					double d0 = (double) x / 128.0D;
-					double d1 = (double) y / 128.0D;
-					int range = minimap.getColors ( ).capacity;
-					
-					int rgb = minimap.getColors ( ).get ( (int) ( range * d0 ) , (int) ( range * d1 ) );
-					if ( rgb == 0 ) {
-						canvas.setPixel ( x , y , MapPalette.TRANSPARENT );
-					} else {
-						canvas.setPixel ( x , y , MapPalette.matchColor ( new Color ( rgb ) ) );
+			if ( last_zoom != zoom ) {
+				for ( int x = 0 ; x < 128 ; x ++ ) {
+					for ( int y = 0 ; y < 128 ; y ++ ) {
+						double d0 = (double) x / 128.0D;
+						double d1 = (double) y / 128.0D;
+						int range = minimap.getColors ( ).capacity;
+						
+						int rgb = minimap.getColors ( ).get ( (int) ( range * d0 ) , (int) ( range * d1 ) );
+						if ( rgb == 0 ) {
+							canvas.setPixel ( x , y , MapPalette.TRANSPARENT );
+						} else {
+							canvas.setPixel ( x , y , MapPalette.matchColor ( new Color ( rgb ) ) );
+						}
 					}
 				}
 			}
 		} else {
 			Vector3i location = toVector3i ( player.getLocation ( ) );
 			int display_range = zoom.getDisplayRange ( );
-			
-			display_area = new Area ( 
+			display_area      = new Area ( 
 					location.sub ( display_range / 2 , 0.0D , display_range / 2 ) ,
 					location.add ( display_range / 2 , 0.0D , display_range / 2 ) );
 			
-			int x_offset = display_area.getMin ( ).getX ( ) - map.getArea ( ).getMin ( ).getX ( );
-			int y_offset = display_area.getMin ( ).getZ ( ) - map.getArea ( ).getMin ( ).getZ ( );
-			
-			for ( int x = 0 ; x < 128 ; x ++ ) {
-				for ( int y = 0 ; y < 128 ; y ++ ) {
-					double d0 = (double) x / 128.0D;
-					double d1 = (double) y / 128.0D;
-					
-					int xx = x_offset + (int) ( display_range * d0 );
-					int yy = y_offset + (int) ( display_range * d1 );
-					
-					if ( xx >= 0 && yy >= 0 && xx < minimap.getColors ( ).capacity && yy < minimap.getColors ( ).capacity ) {
-						int rgb = minimap.getColors ( ).get ( xx , yy );
-						if ( rgb == 0 ) {
-							canvas.setPixel ( x , y , MapPalette.TRANSPARENT );
+			if ( last_zoom != zoom || !Objects.equals ( player.getLocation ( ).toVector ( ) , last_location ) ) {
+				int x_offset = display_area.getMin ( ).getX ( ) - map.getArea ( ).getMin ( ).getX ( );
+				int y_offset = display_area.getMin ( ).getZ ( ) - map.getArea ( ).getMin ( ).getZ ( );
+				
+				for ( int x = 0 ; x < 128 ; x ++ ) {
+					for ( int y = 0 ; y < 128 ; y ++ ) {
+						double d0 = (double) x / 128.0D;
+						double d1 = (double) y / 128.0D;
+						
+						int xx = x_offset + (int) ( display_range * d0 );
+						int yy = y_offset + (int) ( display_range * d1 );
+						
+						if ( xx >= 0 && yy >= 0 && xx < minimap.getColors ( ).capacity && yy < minimap.getColors ( ).capacity ) {
+							int rgb = minimap.getColors ( ).get ( xx , yy );
+							if ( rgb == 0 ) {
+								canvas.setPixel ( x , y , MapPalette.TRANSPARENT );
+							} else {
+								canvas.setPixel ( x , y , MapPalette.matchColor ( new Color ( rgb ) ) );
+							}
 						} else {
-							canvas.setPixel ( x , y , MapPalette.matchColor ( new Color ( rgb ) ) );
+							canvas.setPixel ( x , y , MapPalette.TRANSPARENT );
 						}
-					} else {
-						canvas.setPixel ( x , y , MapPalette.TRANSPARENT );
 					}
 				}
 			}
 		}
+		
+		// caching zoom and player location as vector (as vector to ignore yaw and pitch rotations)
+		zoom_cache.put ( player.getUniqueId ( ) , zoom );
+		location_cache.put ( player.getUniqueId ( ) , player.getLocation ( ).toVector ( ) );
 		
 		// here we're going to add cursors, but first we have to clear the cursors of
 		// the last render.

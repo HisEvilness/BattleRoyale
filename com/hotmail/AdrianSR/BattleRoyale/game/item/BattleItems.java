@@ -52,9 +52,9 @@ public enum BattleItems {
 		    }
 		    
 		    /* make map view */
-	        MapView view = Bukkit.createMap(world);
-	        for (MapRenderer mapRenderer : view.getRenderers()) { // clear renderers of the view created by Bukkit
-	        	view.removeRenderer(mapRenderer);
+	        MapView view = Bukkit.createMap ( world );
+	        for ( MapRenderer renderer : view.getRenderers ( ) ) { // clear renderers of the view created by Bukkit
+	        	view.removeRenderer ( renderer );
 	        }
 	        
 	        /* add custom renderer */

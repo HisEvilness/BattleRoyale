@@ -108,6 +108,9 @@ public final class MapsManager {
 			return;
 		}
 		
+		// config must be reloaded because to world is now available.
+		MapsManager.BATTLE_MAP.reloadConfig ( );
+		
 		final long process_end = ((System.currentTimeMillis() - process_start) / 1000);
 		ConsoleUtil.sendPluginMessage ( "Battle Map especified in config loaded! (" + process_end + "s)", BattleRoyale.getInstance());
 	}

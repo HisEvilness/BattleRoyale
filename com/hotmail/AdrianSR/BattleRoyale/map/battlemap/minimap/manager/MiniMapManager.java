@@ -25,7 +25,7 @@ public final class MiniMapManager extends PluginHandler {
 		super ( plugin ); register ( );
 	}
 	
-	@EventHandler(priority = EventPriority.LOWEST)
+	@EventHandler ( priority = EventPriority.LOWEST )
 	public void addBattleMapRender ( MapInitializeEvent event ) {
 		for ( MapRenderer old : event.getMap ( ).getRenderers ( ) ) {
 			event.getMap ( ).removeRenderer ( old );

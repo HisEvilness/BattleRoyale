@@ -47,7 +47,7 @@ public final class MemberDamagedByRadiation implements Listener {
 				return;
 			}
 			
-			event.setDamage(player.getWorld().getWorldBorder().getDamageAmount());
+			event.setDamage ( player.getWorld ( ).getWorldBorder ( ).getDamageAmount ( ) );
 		}
 	}
 }

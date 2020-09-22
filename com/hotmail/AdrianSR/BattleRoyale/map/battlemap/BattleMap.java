@@ -76,8 +76,8 @@ public final class BattleMap implements Map {
 	 */
 	public BattleMap ( File folder ) {
 		this.folder       = folder;
-		this.config       = new BRMapsYamlManager ( this );
 		this.worldManager = new BRMapsWorldManager ( this );
+		this.config       = new BRMapsYamlManager ( this );
 		this.name         = config.getMapName ( );
 	}
 	

@@ -315,6 +315,10 @@ public class BattleMapEditor extends MapEditor {
 						}
 					};
 					
+					// notify that we're going to save the configuration.
+					player.sendMessage ( ChatColor.YELLOW + "Saving configuration..." );
+					ConsoleUtil.sendPluginMessage ( ChatColor.YELLOW , "Configuration saved!" , BattleRoyale.getInstance ( ) );
+					
 					if ( block_flag ) {
 						SchedulerUtil.runTaskAsynchronously ( save_task , BattleRoyale.getInstance ( ) );
 					} else {
@@ -496,6 +500,9 @@ public class BattleMapEditor extends MapEditor {
 										p.sendMessage(ChatColor.RED + "The world of this battle map could not be loaded!");
 										return;
 									}
+									
+									// config must be reloaded because to world is now available.
+									map.reloadConfig ( );
 									
 									// prepare world to config.
 									map.prepareWorldToConfig();

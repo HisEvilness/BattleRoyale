@@ -215,6 +215,7 @@ public final class LobbyMap implements Map, Listener {
 		p.setHealth(20.0D);
 		p.setFoodLevel(20);
 		p.setGameMode(GameMode.ADVENTURE);
+		p.setFireTicks ( 0 );
 		
 		SchedulerUtil.runTaskLater ( new Runnable ( ) {
 			@Override public void run ( ) {

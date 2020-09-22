@@ -76,7 +76,9 @@ public class MiniMapGenerator {
 		areaCheck ( area );
 		
 		// getXSize and getZSize are the same for us because the area is squared.
+		System.out.println ( ">>>>>>>>>>>> initializing color matrix............." );
 		ColorMatrix colors = new ColorMatrix ( area.getXSize ( ) );
+		System.out.println ( ">>>>>>>>>>>> the color matrix was initialized correctly!" );
 		
 		Vector3i min = area.getMin ( );
 		Vector3i max = area.getMax ( );
@@ -132,7 +134,7 @@ public class MiniMapGenerator {
 			}
 		});
 		
-		Map < ChunkLocation , ChunkSurface > map = new HashMap < > ( );
+		Map < ChunkLocation , ChunkSurface >  map = new HashMap < > ( );
 		List < Future < ChunkSurface > > surfaces = executor.invokeAll ( loaders );
 		for ( Future < ChunkSurface > future : surfaces ) {
 			try {

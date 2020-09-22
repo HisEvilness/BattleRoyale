@@ -101,10 +101,13 @@ public final class GameManager extends PluginHandler {
 			final BattleMap other = new BattleMap(mapFolder);
 //			System.out.println ( "GameManager.startGame ( ) ----- 3" );
 			/* load map world and start if is correctly loaded */
-			if (other.getWorldManager().loadWorld(mapFolder, false)) {
-				// set map
-				map          = MapsManager.BATTLE_MAP;
-//				load_minimap = map.getConfig().miniMapImageExists();
+			if ( other.getWorldManager().loadWorld(mapFolder, false)) {
+				map = MapsManager.BATTLE_MAP;
+				
+				if ( map != null ) {
+					// config must be reloaded because to world is now available.
+					map.reloadConfig ( ); 
+				}
 			}
 		} else { // check Battle Map is not build loaded.
 			if (currMap.isBuildLoaded()) {
