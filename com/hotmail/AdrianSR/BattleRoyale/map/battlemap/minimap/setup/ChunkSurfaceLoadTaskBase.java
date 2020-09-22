@@ -25,9 +25,6 @@ abstract class ChunkSurfaceLoadTaskBase extends ChunkSurfaceLoadTask {
 	
 	public ChunkSurfaceLoadTaskBase ( int x , int z , DataInputStream input , Heightmap heightmap ) {
 		super ( x , z , input , heightmap );
-		
-		this.blocks = new byte [ RenderConstants.CHUNK_BYTES ];
-		this.datas  = new byte [ RenderConstants.CHUNK_BYTES ];
 	}
 
 	@Override
@@ -86,8 +83,10 @@ abstract class ChunkSurfaceLoadTaskBase extends ChunkSurfaceLoadTask {
 				}
 			}
 			
+			dispose ( );
 			return new ChunkSurface ( x , z , surface_colors );
 		} else {
+			dispose ( );
 			return new ChunkSurfaceEmpty ( x , z );
 		}
 	}
@@ -98,6 +97,9 @@ abstract class ChunkSurfaceLoadTaskBase extends ChunkSurfaceLoadTask {
 	 * @return true if parsed successfully.
 	 */
 	protected boolean parseBlocksDatasHeightmap ( ) {
+		this.blocks = new byte [ RenderConstants.CHUNK_BYTES ];
+		this.datas  = new byte [ RenderConstants.CHUNK_BYTES ];
+		
 		// this could seem unnecessary and redundant, but the NBT system we're using
 		// clears the request set, the it necessary to create it when parsing.
 		Set < String > request = new HashSet < > ( );
@@ -166,5 +168,10 @@ abstract class ChunkSurfaceLoadTaskBase extends ChunkSurfaceLoadTask {
 	@Override
 	protected boolean isWater ( int x , int y , int z ) {
 		return getColor ( x , y , z ) == BlockColor.WATER;
+	}
+	
+	protected final void dispose ( ) {
+		this.blocks = null;
+		this.datas  = null;
 	}
 }
